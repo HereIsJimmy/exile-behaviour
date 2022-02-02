@@ -1,40 +1,101 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <p>{{path}}</p>
+    <div>
+      <input type="file" @change="changedFile" />
+    </div>
   </div>
 </template>
 
 <script>
+const chokidar = require('chokidar')
+const Diff = require('diff')
+const fs = require('fs/promises')
+import safeZones from '@/assets/safeZones.js'
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+    return {
+      path: '',
+      contents: null,
+      parsedData: [],
+
+      watcher: null,
+    }
+  },
+  created() {
+    this.watcher = chokidar.watch([], { persistent: true });
+    this.watcher
+      .on('ready', this.readfile)
+      .on('change', this.readfile)
+      .on('unlink', p => p + ' removed')
+      .on('add', p => p + ' added')
+  },
+  methods: {
+    changedFile(ev) {
+      if (!ev.target.files.length)
+        return
+
+      const { path } = ev.target.files[0]
+      if (path === this.path)
+        return
+
+      this.unwatchCurrent()
+      this.$set(this, 'path', path)
+      this.watcher.add(this.path)
+    },
+    unwatchCurrent() {
+      this.watcher.unwatch(this.path)
+    },
+    async readfile() {
+      const file = await fs.readFile(this.path, { encoding: 'utf8' })
+      if (this.contents) {
+        const diff = Diff.diffLines(this.contents, file)
+        if (diff.some(it => it.removed)) {
+          this.parseAllData(file)
+        } else {
+          const addedLines = diff.find(it => it.added)
+          this.parseLines(addedLines)
+        }
+      } else {
+        this.parseAllData(file)
+      }
+      this.contents = file
+    },
+    parseAllData(file) {
+      this.$set(this, 'parsedData', this.parse(file))
+      console.log([...this.parsedData])
+      // const enteredHideout = this.parsedData.filter(it => it.hideout)
+      // let time = 0
+      // console.log('Time spent in hideout:', time)
+    },
+    parseLines(chunk) {
+      const parsed = this.parse(chunk)
+      this.parseData.push(...parsed)
+      console.log([...parsed])
+    },
+    parse(fileData) {
+      const split = fileData.split('\n')
+      const filtered = split.filter(this.filterLine)
+      return filtered.map(l => {
+        const master = this.isMaster(l)
+        const hideout = safeZones.some(zone => l.includes(zone))
+        const zone = l.split('You have entered ')[1].replace('.', '').replace('\r', '')
+        const [ date, time ] = l.split(' ').slice(0, 2)
+        return { zone, date, time, hideout, master }
+      })
+    },
+    filterLine(l) {
+      return l.includes('You have entered')
+    },
+    isMaster() {
+      return false
+    }
   }
 }
 </script>

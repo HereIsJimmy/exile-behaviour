@@ -13,7 +13,9 @@
   },
   "main": "background.js",
   "dependencies": {
+    "chokidar": "^3.5.3",
     "core-js": "^3.6.5",
+    "diff": "^5.0.0",
     "vue": "^2.6.11"
   },
   "devDependencies": {
