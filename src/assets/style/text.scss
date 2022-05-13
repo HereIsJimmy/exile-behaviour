@@ -1,0 +1,40 @@
+
+.text-muted {
+  color: #aaa;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+.text-center {
+  text-align: center;
+}
+.pointer {
+  cursor: pointer;
+}
+
+.ws-nowrap {
+  white-space: nowrap;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+}
+
+@font-face {
+	font-family: 'Montserrat';
+	src: url('../fonts/Montserrat.ttf') format('truetype');
+	font-weight: 300 600;
+  font-style: normal;
+}

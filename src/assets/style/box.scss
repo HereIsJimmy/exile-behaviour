@@ -1,0 +1,39 @@
+
+[class*=button] {
+  cursor: pointer;
+  padding: 1em;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  transition: background-color 300ms;
+  user-select: none;
+  &:hover {
+    background-color: darken(#fff, 5%);
+  }
+  &:active {
+    background-color: darken(#fff, 10%);
+  }
+  &[class*=-active] {
+    background-color:cadetblue;
+    border-color:darken(cadetblue, 20%);
+    box-shadow: 0 0 8px 1px rgb(0 0 0 / 54%);
+    color: white;
+    &:hover {
+      background-color: darken(cadetblue, 5%);
+    }
+    &:active {
+      background-color: darken(cadetblue, 15%);
+    }
+  }
+  &[class*=-default] {
+    background-color:darkgray;
+    border-color:darken(darkgray, 20%);
+    box-shadow: 0 0 8px 1px rgb(0 0 0 / 54%);
+    color: white;
+    &:hover {
+      background-color: darken(darkgray, 5%);
+    }
+    &:active {
+      background-color: darken(darkgray, 15%);
+    }
+  }
+}

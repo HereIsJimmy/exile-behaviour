@@ -1,0 +1,73 @@
+
+.valign-center {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-evenly {
+  justify-content: space-evenly;
+}
+.flex-center {
+  justify-content: center;
+}
+.flex-around {
+  justify-content: space-around;
+}
+
+[class^=flex-] {
+  &[class*=-col] {
+    display: flex;
+    flex-direction: column;
+  }
+  &[class*=-row] {
+    display: flex;
+    flex-direction: row;
+  }
+  &[class*=-wrap] {
+    flex-wrap: wrap;
+  }
+  &[class*=-gap1] {
+    gap: 1em;
+  }
+  & > * {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  & > [class*=-static] {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  & > [class*=-grower] {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  & > [class*=-shrink] {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+  & > [class*=-p15] {
+    flex-basis: 15%;
+  }
+  & > [class*=-p20] {
+    flex-basis: 20%;
+  }
+  & > [class*=-p25] {
+    flex-basis: 25%;
+  }
+  & > [class*=-p75] {
+    flex-basis: 75%;
+  }
+  & > [class*=-half] {
+    flex-basis: 50%;
+  }
+  & > [class*=-full] {
+    flex-basis: 100%;
+  }
+  & > [class*=-third] {
+    flex-basis: calc(100%/3);
+  }
+  & > [class*=-auto] {
+    flex-basis: auto;
+  }
+}
